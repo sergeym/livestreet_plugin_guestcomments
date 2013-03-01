@@ -18,18 +18,45 @@
 		<a name="comment{$oComment->getId()}"></a>
 		
 		<div class="folding"></div>
-		
-		<a href="{$oUser->getUserWebPath()}"><img src="{$oUser->getProfileAvatarPath(48)}" alt="avatar" class="comment-avatar" /></a>
-		
+			{if $oComment->getTargetType() != 'talk'}
+				<div id="vote_area_comment_{$oComment->getId()}" class="vote
+																		{if $oComment->getRating() > 0}
+																			vote-count-positive
+																		{elseif $oComment->getRating() < 0}
+																			vote-count-negative
+																		{/if}
+
+																		{if (strtotime($oComment->getDate()) < $smarty.now - $oConfig->GetValue('acl.vote.comment.limit_time') && !$oVote) || ($oUserCurrent && $oUserCurrent->getId() == $oUser->getId())}
+																			vote-expired
+																		{/if}
+
+																		{if $oVote}
+																			voted
+
+																			{if $oVote->getDirection() > 0}
+																				voted-up
+																			{else}
+																				voted-down
+																			{/if}
+																		{/if}">
+					<span class="vote-count" id="vote_total_comment_{$oComment->getId()}">{if $oComment->getRating() > 0}+{/if}{$oComment->getRating()}</span>
+					<div class="vote-down" onclick="return ls.vote.vote({$oComment->getId()},this,-1,'comment');"></div>
+					<div class="vote-up" onclick="return ls.vote.vote({$oComment->getId()},this,1,'comment');"></div>
+				</div>
+			{/if}
+
 		<div id="comment_content_id_{$oComment->getId()}" class="comment-content">
-			<div class=" text">
+
+			<div class="text">
 				{$oComment->getText()}
 			</div>
 		</div>
 		
 		
 		<ul class="comment-info">
+		    <li class="avatar"><a href="{$oUser->getUserWebPath()}"><img src="{$oUser->getProfileAvatarPath(24)}" alt="avatar" /></a></li>
 			<li class="comment-author {if $iAuthorId == $oUser->getId()}comment-topic-author{/if}" title="{if $iAuthorId == $oUser->getId() and $sAuthorNotice}{$sAuthorNotice}{/if}">
+
                 {if !$oUser->getId() }
                     <a><b>{$oComment->getGuestName()|escape}</b>&nbsp;&nbsp;&nbsp;<i><small>{$aLang.plugin.guestcomments.guest}</small></i></a>
                 {else}
@@ -41,35 +68,6 @@
 					{date_format date=$oComment->getDate() hours_back="12" minutes_back="60" now="60" day="day H:i" format="j F Y, H:i"}
 				</time>
 			</li>
-			
-			
-			{if $oComment->getTargetType() != 'talk'}						
-				<li id="vote_area_comment_{$oComment->getId()}" class="vote 
-																		{if $oComment->getRating() > 0}
-																			vote-count-positive
-																		{elseif $oComment->getRating() < 0}
-																			vote-count-negative
-																		{/if}    
-																
-																		{if (strtotime($oComment->getDate()) < $smarty.now - $oConfig->GetValue('acl.vote.comment.limit_time') && !$oVote) || ($oUserCurrent && $oUserCurrent->getId() == $oUser->getId())}
-																			vote-expired
-																		{/if}
-																		
-																		{if $oVote} 
-																			voted 
-																			
-																			{if $oVote->getDirection() > 0}
-																				voted-up
-																			{else}
-																				voted-down
-																			{/if}
-																		{/if}">
-					<span class="vote-count" id="vote_total_comment_{$oComment->getId()}">{if $oComment->getRating() > 0}+{/if}{$oComment->getRating()}</span>
-					<div class="vote-down" onclick="return ls.vote.vote({$oComment->getId()},this,-1,'comment');"></div>
-					<div class="vote-up" onclick="return ls.vote.vote({$oComment->getId()},this,1,'comment');"></div>
-				</li>
-			{/if}
-			
 			
 			{if $oUserCurrent and !$bNoCommentFavourites}
 				<li class="comment-favourite">
@@ -87,8 +85,8 @@
 				<li class="goto goto-comment-parent"><a href="#" onclick="ls.comments.goToParentComment({$oComment->getId()},{$oComment->getPid()}); return false;" title="{$aLang.comment_goto_parent}">↑</a></li>
 			{/if}
 			<li class="goto goto-comment-child"><a href="#" title="{$aLang.comment_goto_child}">↓</a></li>
-			
-			{if $oUserCurrent || $oConfig->GetValue('plugin.guestcomments.enabled')}
+
+			{if  $oUserCurrent || $oConfig->GetValue('plugin.guestcomments.enabled') }
 				{if !$oComment->getDelete() and !$bAllowNewComment}
 					<li><a href="#" onclick="ls.comments.toggleCommentForm({$oComment->getId()}); return false;" class="reply-link link-dotted">{$aLang.comment_answer}</a></li>
 				{/if}

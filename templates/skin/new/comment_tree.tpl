@@ -6,11 +6,36 @@
 }
 
 {hook run='comment_tree_begin' iTargetId=$iTargetId sTargetType=$sTargetType}
+{*
+{if $oUserCurrent}
+<script type="text/javascript">
+	jQuery(document).ready(function($){
+		$(document).click(function(){
+			if (!$('#reply-top-form').is(':visible')) {
+				$('#reply').hide();
+				$('#reply-top-form').show();
+			}
+		});
+		
+		$('body').on('click', '#reply-top', function(e) {
+			e.stopPropagation();
+		});
+	});
+	
+	ls.comments.expandReplyTop = function() {
+		$('#reply').show().appendTo('#reply-top');
+		$('#reply-top-form').hide();
+		$('#form_comment_text').val('');
+		$('#form_comment_reply').val(0);
+	}
+</script>
+{/if}
+*}
 
 <div class="comments" id="comments">
 	<header class="comments-header">
-		<h3><span id="count-comments">{$iCountComment}</span> {$iCountComment|declension:$aLang.comment_declension:'russian'}</h3>
-		
+		<h3>{$aLang.comment_title} (<span id="count-comments">{$iCountComment}</span>)</h3>
+
 		{if $bAllowSubscribe and $oUserCurrent}
 			<div class="subscribe">
 				<input {if $oSubscribeComment and $oSubscribeComment->getStatus()}checked="checked"{/if} type="checkbox" id="comment_subscribe" class="input-checkbox" onchange="ls.subscribe.toggle('{$sTargetType}_new_comment','{$iTargetId}','',this.checked);">
@@ -20,6 +45,16 @@
 	
 		<a name="comments"></a>
 	</header>
+	
+	{*
+	{if $oUserCurrent}
+		<div id="reply-top">
+			<div class="wall-submit wall-submit-reply wall-submit-comment" id="reply-top-form">
+				<textarea rows="4" class="input-text input-width-full" placeholder="{$aLang.wall_reply_placeholder}" onclick="ls.comments.expandReplyTop();"></textarea>
+			</div>
+		</div>
+	{/if}
+	*}
 
 	{assign var="nesting" value="-1"}
 	{foreach from=$aComments item=oComment name=rublist}
@@ -67,7 +102,7 @@
 			<form method="post" id="form_comment" onsubmit="return false;" enctype="multipart/form-data">
 				{hook run='form_add_comment_begin'}
 				
-				<textarea name="comment_text" id="form_comment_text" class="mce-editor markitup-editor input-width-full"></textarea>
+				<textarea name="comment_text" id="form_comment_text" class="input-width-full"></textarea>
 				
 				{hook run='form_add_comment_end'}
 				
@@ -82,7 +117,8 @@
 			</form>
 		</div>
 	{else}
-        {if $oConfig->GetValue('plugin.guestcomments.enabled')}
+		{if $oConfig->GetValue('plugin.guestcomments.enabled')}
+
             <h4 class="reply-header" id="comment_id_0">
                 <a href="#" class="link-dotted" onclick="ls.comments.toggleCommentForm(0); return false;">{$sNoticeCommentAdd}</a>
             </h4>
@@ -96,6 +132,7 @@
                     }
                 }
             </script>
+
 
             <div id="reply" class="reply">
                 <form method="post" id="form_comment" onsubmit="return false;" enctype="multipart/form-data">
@@ -131,10 +168,11 @@
                     <input type="hidden" name="cmt_target_id" value="{$iTargetId}" />
                 </form>
             </div>
+
         {else}
-		    {$aLang.comment_unregistered}
-	    {/if}
+            {$aLang.comment_unregistered}<br />
+        {/if}
 	{/if}
-{/if}
+{/if}	
 
 

@@ -67,15 +67,20 @@
 			<form method="post" id="form_comment" onsubmit="return false;" enctype="multipart/form-data">
 				{hook run='form_add_comment_begin'}
 				
-				<textarea name="comment_text" id="form_comment_text" class="mce-editor markitup-editor input-width-full"></textarea>
+				<textarea name="comment_text" id="form_comment_text" class="mce-editor markitup-editor input-width-full" style="width:100%"></textarea>
 				
 				{hook run='form_add_comment_end'}
-				
-				<button type="submit"  name="submit_comment" 
-						id="comment-button-submit" 
-						onclick="ls.comments.add('form_comment',{$iTargetId},'{$sTargetType}'); return false;" 
-						class="button button-primary">{$aLang.comment_add}</button>
-				<button type="button" onclick="ls.comments.preview();" class="button">{$aLang.comment_preview}</button>
+
+                    <div class="button2 button-primary l-b" style="float:left">
+                        <em></em><span></span>
+        				<button type="submit"  name="submit_comment"
+        						id="comment-button-submit"
+        						onclick="ls.comments.add('form_comment',{$iTargetId},'{$sTargetType}'); return false;">{$aLang.comment_add}</button>
+                    </div>
+                    <div class="button2 button-primary l-b" style="margin-left:10px">
+                        <em></em><span></span>
+				        <button type="button" onclick="ls.comments.preview();">{$aLang.comment_preview}</button>
+                    </div>
 				
 				<input type="hidden" name="reply" value="0" id="form_comment_reply" />
 				<input type="hidden" name="cmt_target_id" value="{$iTargetId}" />
@@ -83,6 +88,7 @@
 		</div>
 	{else}
         {if $oConfig->GetValue('plugin.guestcomments.enabled')}
+
             <h4 class="reply-header" id="comment_id_0">
                 <a href="#" class="link-dotted" onclick="ls.comments.toggleCommentForm(0); return false;">{$sNoticeCommentAdd}</a>
             </h4>
@@ -111,7 +117,7 @@
                         <input type="text" class="input-text input-width-200" id="guest_email" name="guest_email" value="" autocomplete="on">
                     </p>
 
-                    <textarea name="comment_text" id="form_comment_text" class="mce-editor markitup-editor input-width-full"></textarea>
+                    <textarea name="comment_text" id="form_comment_text" class="mce-editor markitup-editor input-width-full" style="width:100%"></textarea>
 
                     {hook run='form_add_comment_end'}
 
@@ -121,20 +127,26 @@
                         <input type="text" class="input-text input-width-50" id="captcha" name="captcha" value="" maxlength=3 size=9>
                     </p>
 
-                    <button type="submit"  name="submit_comment"
-                            id="comment-button-submit"
-                            onclick="ls.comments.add('form_comment',{$iTargetId},'{$sTargetType}'); return false;"
-                            class="button button-primary">{$aLang.comment_add}</button>
-                    <button type="button" onclick="ls.comments.preview();" class="button">{$aLang.comment_preview}</button>
+                        <div class="button2 button-primary l-b" style="float:left">
+                            <em></em><span></span>
+                            <button type="submit"  name="submit_comment"
+                                    id="comment-button-submit"
+                                    onclick="ls.comments.add('form_comment',{$iTargetId},'{$sTargetType}'); return false;">{$aLang.comment_add}</button>
+                        </div>
+                        <div class="button2 button-primary l-b" style="margin-left:10px">
+                            <em></em><span></span>
+                            <button type="button" onclick="ls.comments.preview();">{$aLang.comment_preview}</button>
+                        </div>
 
                     <input type="hidden" name="reply" value="0" id="form_comment_reply" />
                     <input type="hidden" name="cmt_target_id" value="{$iTargetId}" />
                 </form>
             </div>
+
         {else}
 		    {$aLang.comment_unregistered}
-	    {/if}
+        {/if}
 	{/if}
-{/if}
+{/if}	
 
 
