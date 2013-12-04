@@ -1,0 +1,11 @@
+{
+    "name": "sergeym/livestreet_plugin_guestcomments",
+    "description": "Allow guests comments topics",
+    "minimum-stability": "dev",
+    "authors": [
+        {
+            "name": "Sergey Marin",
+            "email": "marin.sergey@gmail.com"
+        }
+    ]
+}
